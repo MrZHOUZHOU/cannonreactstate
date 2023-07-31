@@ -1,5 +1,6 @@
 import "./App.css";
-import useStore from "./cannonreactstate/main";
+import useStore from "@cannonui/reactstate";
+// import useStore from "./cannonreactstate/main";
 import store from "./store";
 import CmpA from "./cmpA";
 import CmpC from "./cmpC";

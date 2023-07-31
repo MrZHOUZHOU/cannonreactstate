@@ -1,5 +1,7 @@
-import createStore from "./cannonreactstate/createStore";
-import type { apiStore } from "./cannonreactstate/createStore";
+// import createStore from "./cannonreactstate/createStore";
+import { createStore } from "@cannonui/reactstate";
+import type { apiStore } from "@cannonui/reactstate";
+// import type { apiStore } from "./cannonreactstate/createStore";
 interface store {
   val: number;
   inc: () => void;

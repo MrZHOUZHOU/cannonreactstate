@@ -1,27 +1,118 @@
-# React + TypeScript + Vite
+# CannonUI ReactState - State Management Library for React
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+CannonUI ReactState is a simple and lightweight state management library for React applications. It provides a flexible API for managing and updating your application's state, and it supports the use of middleware for extending its functionality.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Simple and easy-to-use API for managing state in React applications.
+- Built-in support for middleware to enhance and customize the state management process.
+- Lightweight and efficient design, minimizing the impact on your application's performance.
+- Seamless integration with React components using custom hooks.
+- Support for undo/redo, caching, animation, and more with customizable middleware.
 
-## Expanding the ESLint configuration
+## Installation
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
+```bash
+npm install @cannonui/reactstate@latest
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+## Usage
+
+### 1. Creating a Store
+
+To start using CannonUI ReactState, you need to create a store that holds your application's state. The store is created using the `createStore` function, where you define your initial state and the reducer function to handle state updates.
+
+```typescript
+// store.js
+import { createStore } from "@cannonui/reactstate";
+import type { apiStore } from "@cannonui/reactstate";
+
+interface Store {
+  val: number;
+  inc: () => void;
+  dec: () => void;
+  reset: () => void;
+}
+
+const store = createStore((set: apiStore<Store>["set"]) => ({
+  val: 1,
+  inc: () => set((state: Store) => ({ val: state.val + 1 })),
+  dec: () => set((state: Store) => ({ val: state.val - 1 })),
+  reset: () => set((state: Store) => ({ val: 0 })),
+}));
+
+export type { Store };
+export default store;
+```
+
+### 2. Using the Store in Components
+
+You can use the `useStore` hook to connect your React components to the state store and access the state and actions.
+
+```jsx
+// MyComponent.js
+import React from "react";
+import useStore from "./useStore"; // Import the useStore hook
+import { Store } from "./store"; // Import the store type
+
+const MyComponent = () => {
+  const { val, inc, dec, reset } = useStore < Store > store; // Use the useStore hook with your store
+
+  return (
+    <div>
+      <div>Value: {val}</div>
+      <button onClick={inc}>Increment</button>
+      <button onClick={dec}>Decrement</button>
+      <button onClick={reset}>Reset</button>
+    </div>
+  );
+};
+
+export default MyComponent;
+```
+
+### 3. Adding Middleware
+
+You can enhance your state management with middleware to add custom functionality. Middleware can be used for animations, caching, undo/redo, and more.
+
+```javascript
+const loggingMiddleware = async (state: any) => {
+  console.log("State before update:", state);
+  return state; // Return the state as is without modification
+};
+
+export default loggingMiddleware;
+```
+
+To add middleware to your store, you can pass it as an array to the `createStore` function:
+
+```javascript
+// store.js
+import { createStore } from "@cannonui/reactstate";
+import loggingMiddleware from "./loggingMiddleware";
+
+// ... (previous code)
+
+const store = createStore(
+  (set: apiStore<Store>["set"]) => ({
+    // ... (initial state and actions)
+  }),
+  {
+    middlewares: [loggingMiddleware], // Add your middleware here
+  }
+);
+
+// ... (remaining code)
+```
+
+## Contributing
+
+We welcome contributions to CannonUI ReactState! If you find a bug or have an idea for an enhancement, feel free to open an issue or submit a pull request. Please ensure to follow our code of conduct.
+
+## License
+
+CannonUI ReactState is open-source software licensed under the MIT License.
+
+## Acknowledgments
+
+Special thanks to all contributors and the React community for their support.
